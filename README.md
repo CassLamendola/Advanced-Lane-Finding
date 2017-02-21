@@ -1,6 +1,6 @@
 ## Advanced Lane Finding
 
-In this project, the goal was to write a software pipeline to identify the lane boundaries in a video. Check out my [writeup]() for this project for more details.  
+In this project, the goal was to write a software pipeline to identify the lane boundaries in a video. Check out my [writeup](https://github.com/CassLamendola/Advanced-Lane-Finding/blob/master/writeup.md) for this project for more details.  
 
 The Project
 ---
