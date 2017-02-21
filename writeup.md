@@ -20,7 +20,7 @@
 [image5]: ./output_images/Thresholds.png "Binary Examples"
 [image6]: ./output_images/Thresholded_S.png "Binary Color"
 [image7]: ./output_images/combined_thresholds.png "Combined Thresholds"
-[image8]: ./output_images/'Thresholded_and_Warped' "Thresholded and Warped"
+[image8]: ./output_images/'Thresholded_and_Warped.png' "Thresholded and Warped"
 [image9]: ./output_images/find_lines.png "Sliding Window"
 [image10]: ./output_images/Output.png "Output Example"
 [image11]: ./output_images/final_test_imgs "Final Test Images"
