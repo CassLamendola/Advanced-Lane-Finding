@@ -115,6 +115,7 @@ My first attempth at the pipeline only uses the sliding window technique for fin
 
 To accomplish this, I created a Line class that stores information about the lines from the last few frames and updated my pipeline to make use of the `find_more_lane_lines()` function.
 Here's [link to my final video result](./final_project_result.mp4.zip)
+You can also check out the videos in my [python notebook](https://github.com/CassLamendola/Advanced-Lane-Finding/blob/master/project.ipynb)
 
 ---
 
