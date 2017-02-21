@@ -114,7 +114,7 @@ I implemented this step with the function `draw_on_road()` (lines 388-411 in pro
 My first attempth at the pipeline only uses the sliding window technique for finding the lines in each frame. This pipeline does very well on the test images. That makes sense, since the images are in no particular order, therefore we don't expect consecutive frames to have a similar curvature. But the video is not perfect. It had trouble where the lines are difficult to see. For these cases, I needed to do a targeted search for the lane based on the location of the lines in the last few frames. That way, if the lines are lost/hard to find, I could use the average from the last few frames and try again in the next frame. 
 
 To accomplish this, I created a Line class that stores information about the lines from the last few frames and updated my pipeline to make use of the `find_more_lane_lines()` function.
-Here's [link to my final video result](./final_project_result.mp4)
+Here's [link to my final video result](./final_project_result.mp4.zip)
 
 ---
 
