@@ -385,29 +385,53 @@ def measure_curve(ploty, left_fit, right_fit):
     # Now our radius of curvature is in meters
     return (left_curverad, right_curverad)
 
+def distance_from_center(image_width, pts):
+    # Get position of center camera, should be center of image
+    position = image_width/2
+    left_base = np.min(pts[(pts[:,1] < position) & (pts[:,0] > 700)][:,1])
+    right_base = np.max(pts[(pts[:,1] > position) & (pts[:,0] > 700)][:,1])
+    
+    # Expected center of lane, half distance between left and right corners
+    center = (left_base + right_base)/2
+    
+    # Define conversions in x and y from pixels space to meters
+    xm_per_pix = 3.7/550  
+    return (position - center) * xm_per_pix
+
 # Fill in the lane with color and convert back to the original perspective
-def draw_on_road(undist, warped, ploty, left_fitx, right_fitx):
+def draw_on_road(undist, warped, ploty, left_fitx, right_fitx, radius_left, radius_right):
     # Create an image to draw lines on
     warp_zero = np.zeros_like(warped).astype(np.uint8)
     color_warp = np.dstack((warp_zero, warp_zero, warp_zero))
-    #color_warp = cv2.cvtColor(color_warp, cv2.COLOR_GRAY2RGB)
     
     # Recast the x and y points into usable format for cv2.fillPoly()
     pts_left = np.array([np.transpose(np.vstack([left_fitx, ploty]))])
     pts_right = np.array([np.flipud(np.transpose(np.vstack([right_fitx, ploty])))])
-
     pts = np.hstack((pts_left, pts_right))
 
     # Draw the lane onto the warped blank image
     cv2.fillPoly(color_warp, np.int_(pts), (0, 255, 0))
     
     # Warp the blank back into original image space using inverse perspective matrix
-    new_warp = warp(color_warp, reverse=True)[0]
-    #new_warp = new_warp.reshape(new_warp.shape + (3,))
+    new_warp = warp(color_warp, src, dst, reverse=True)
     
     # Combine the result with the original image
     result = cv2.addWeighted(undist, 0.7, new_warp, 0.3, 0)
     
+    # Calculate distance from center in meters
+    imwidth = undist.shape[1]
+    pts = np.argwhere(new_warp[:, :, 1])
+    distance = distance_from_center(imwidth, pts)
+    
+    # Write curve on image
+    result = cv2.putText(result, 
+                "Left Radius: {0} m, Right Radius: {1} m".format(int(radius_left), int(radius_right)), 
+                (5,40), cv2.FONT_HERSHEY_SIMPLEX, 1, 255)
+    
+    # Write distance from center on image
+    result = cv2.putText(result, 
+                "Distance from center: {0} m".format(str(distance)), 
+                (5,70), cv2.FONT_HERSHEY_SIMPLEX, 1, 255)
     return result
 
 # First attempt at pipeline
@@ -431,7 +455,7 @@ def pipeline1(img):
     curve = measure_curve(ploty, left_fitx, right_fitx)
 
     # Fill in lane green and undistort
-    new_img = draw_on_road(img, binary_warped, ploty, left_fitx, right_fitx)
+    new_img = draw_on_road(img, binary_warped, ploty, left_fitx, right_fitx, radius_left, radius_right)
 
     return new_img, curve
 
@@ -558,7 +582,7 @@ def pipeline(img):
             left_line.detected = False
             
     # Fill in lane green and undistort
-    new_img = draw_on_road(img, binary_warped, ploty, left_fitx, right_fitx).astype(np.uint8)
+    new_img = draw_on_road(img, binary_warped, ploty, left_fitx, right_fitx, radius_left, radius_right).astype(np.uint8)
     
     # Write curve on image
     new_img = cv2.putText(new_img, 

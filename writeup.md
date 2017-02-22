@@ -97,11 +97,13 @@ Another function was created to search within a margin of the last detected line
 
 ####5. Describe how (and identify where in your code) you calculated the radius of curvature of the lane and the position of the vehicle with respect to center.
 
-I calculate the radius of the curve with a function called `measure_curve()` (lines 370-386 in project.py) which takes as input the coefficients from the left and right lines and outputs the curve radius for each. In order to measure the curve in meters instead of pixels, I needed to calculate the number of pixels per meter in the example images. A standard lane is 3.7 meters, which is 700 pixels in my warped image. The warpee image also has 3 dashed lines. Each line is about 3 meters long with about 6 meters between lines. Therefore the lenght of the road is about 27 meters which equals 720 pixels.
+I calculate the radius of the curve with a function called `measure_curve()` (lines 371-386 in project.py) which takes as input the coefficients from the left and right lines and outputs the curve radius for each. In order to measure the curve in meters instead of pixels, I needed to calculate the number of pixels per meter in the example images. A standard lane is 3.7 meters, which is 700 pixels in my warped image. The warped image also has 3 dashed lines. Each line is about 3 meters long with about 6 meters between lines. Therefore the length of the road is about 27 meters which equals 720 pixels.
+
+The function to calculate the position of the car with respect to center is called `distance_from_center()`. It takes the image width and a set of points that make up the lane lines as arguments and outputs the distance in meters. A negative number indicates the car is left of center and positive indicates it's right of center. (Lines 388-399 in project.py)
 
 ####6. Provide an example image of your result plotted back down onto the road such that the lane area is identified clearly.
 
-I implemented this step with the function `draw_on_road()` (lines 388-411 in project.py). This function takes in an undistorted image, a warped image, and the formulas for the left and right lines. It then fills in the space between the lines in the warped image and unwarps the image with the `warp()` function. I set `reverse=True` in `warp()` so that it would use the inverse Matrix. Here is an example of my result on a test image:
+I implemented this step with the function `draw_on_road()` (lines 402-435 in project.py). This function takes in an undistorted image, a warped image, and the formulas for the left and right lines. It then fills in the space between the lines in the warped image and unwarps the image with the `warp()` function. I set `reverse=True` in `warp()` so that it would use the inverse Matrix. Here is an example of my result on a test image:
 
 ![alt text][image10]
 
@@ -111,9 +113,9 @@ I implemented this step with the function `draw_on_road()` (lines 388-411 in pro
 
 ####1. Provide a link to your final video output.  Your pipeline should perform reasonably well on the entire project video (wobbly lines are ok but no catastrophic failures that would cause the car to drive off the road!).
 
-My first attempth at the pipeline only uses the sliding window technique for finding the lines in each frame. This pipeline does very well on the test images. That makes sense, since the images are in no particular order, therefore we don't expect consecutive frames to have a similar curvature. But the video is not perfect. It had trouble where the lines are difficult to see. For these cases, I needed to do a targeted search for the lane based on the location of the lines in the last few frames. That way, if the lines are lost/hard to find, I could use the average from the last few frames and try again in the next frame. 
+My first attempt at the pipeline (lines 438-460 in project.py) only uses the sliding window technique for finding the lines in each frame. This pipeline does very well on the test images. That makes sense, since the images are in no particular order, therefore we don't expect consecutive frames to have a similar curvature. But the video is not perfect. It had trouble where the lines are difficult to see. For these cases, I needed to do a targeted search for the lane based on the location of the lines in the last few frames. That way, if the lines are lost/hard to find, I could use the average from the last few frames and try again in the next frame. 
 
-To accomplish this, I created a Line class that stores information about the lines from the last few frames and updated my pipeline to make use of the `find_more_lane_lines()` function.
+To accomplish this, I created a Line class (lines 463-519) that stores information about the lines from the last few frames and updated my pipeline (lines 525-592) to make use of the `find_more_lane_lines()` function.
 Here's [link to my final video result](./final_project_result.mp4.zip)
 
 You can also check out the videos in my [python notebook](https://github.com/CassLamendola/Advanced-Lane-Finding/blob/master/project.ipynb)
